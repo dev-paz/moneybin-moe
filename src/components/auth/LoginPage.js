@@ -1,72 +1,47 @@
 import React from 'react';
 import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
+import GoogleLogin from 'react-google-login';
+import { GoogleLogout } from 'react-google-login';
+import Cookies from 'universal-cookie';
+
 import 'whatwg-fetch'
+import './styles.css'
 
+const LoginPage = (props) => {
 
-class LoginPage extends React.Component {
-  constructor(props) {
-  super(props);
-  this.state = {
-    email: "aehrtaeh",
-    password: "aehtraerth",
-  };
-}
+const responseGoogle = (response) => {
+  var id_token = response["tokenObj"]["id_token"]
 
-submitForm  = (ev) => {
-  ev.preventDefault()
-  var myHeaders = new Headers();
-  myHeaders.append('Content-Type', 'application/json');
-
-  fetch('http://localhost:8881/create_user', {
+  fetch('https://moneybin.herokuapp.com/google_login', {
       method: 'POST',
       headers: {
             Accept: 'application/json',
-                    'Content-Type': 'application/json',
+            'Content-Type': 'application/json',
         },
-      mode: 'no-cors',
+      mode: 'cors',
+      credentials: "include",
       cache: 'default',
       body: JSON.stringify({
-      "email" : "kjshdflia",
-      "password" : "password"
+      "token" : id_token
     }),
-  });
+  })
+  .then(response => {
+    if (response.status == 200) {
+      props.history.push('/home')
+    }
+  })
 }
 
-handleEmailChange = (email) => {
-  this.setState({ email: email.target.value.toString() })
-}
-
-handlePasswordChange = (password) => {
-  this.setState({ password: password.target.value.toString() })
-}
-
-render (){
   return (
-  <div>
-  <Form>
-    <FormGroup>
-    <Label for="exampleEmail">Email</Label>
-    <Input
-      type="email"
-      placeholder="with a placeholder"
-      value={this.state.email}
-      onChange={(email) => this.handleEmailChange(email)}
-     />
-  </FormGroup>
-  <FormGroup>
-    <Label for="examplePassword">Password</Label>
-    <Input
-      type="password"
-      placeholder="password placeholder"
-      value={this.state.password}
-      onChange={(password) => this.handlePasswordChange(password)}
+    <div>
+    <GoogleLogin
+      clientId="384174299809-87qadht2f8m2dlvgvud87g59bj32agjk.apps.googleusercontent.com"
+      buttonText="Login"
+      onSuccess={responseGoogle}
+      onFailure={responseGoogle}
     />
-  </FormGroup>
-  <Button onClick={this.submitForm} >Submit</Button>
-  </Form>
-  </div>
-);
-}
+    </div>
+ )
 }
 
-export default LoginPage;
+export default LoginPage

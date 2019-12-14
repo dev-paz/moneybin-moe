@@ -19,9 +19,7 @@ render() {
   return (
   <Router>
     <Switch>
-      <Route path="/login">
-         <LoginPage />
-      </Route >
+      <Route path="/login" component={LoginPage} />
          <ProtectedRoute path="/home" component={HomeScreen}/>
     </Switch>
   </Router>
